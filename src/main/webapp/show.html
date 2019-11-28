@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div style="height: 100px;width: 300px;margin:0 auto">
+    <input type="text" id="datetime01"> <input type="button" value="查询" onclick="clickChange()">
+</div>
+<div id="container" style="height: 100%"></div>
+
+<script>
+    var datetime = 735902;
+
+    function change() {
+        datetime++;
+        $.get("/querymore", "date=" + datetime, function (data) {
+            for (var i = 0; i < data.length; i++) {
+                num01s[i] = data[i].value
+                date01s[i] = data[i].statdate
+            }
+            option = {
+                title: {
+                    left:'center',
+                    text:'7日留存情况统计折线图'
+                },
+                xAxis: {
+                    name: "N日",
+                    type: 'category',
+                    data: date01s
+                },
+                yAxis: {
+                    name: '留存',
+                    type: 'value'
+                },
+                series: [{
+                    data: num01s,
+                    type: 'line',
+                    areaStyle: {}
+                }]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        });
+    }
+
+    function clickChange() {
+        datetime = $("#datetime01").val();
+        $.get("/query", "statdate=" + datetime, function (data) {
+            for (var i = 0; i < data.length; i++) {
+                date01s[i] = data[i].statdate
+                num01s[i] = data[i].value
+            }
+            option = {
+                title: {
+                    text: '7日留存'
+                },
+                xAxis: {
+                    name: "N日",
+                    type: 'category',
+                    data: date01s
+                },
+                yAxis: {
+                    name: '留存',
+                    type: 'value'
+                },
+                series: [{
+                    data: num01s,
+                    type: 'line',
+                    areaStyle: {}
+                }]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        });
+        window.clearInterval(t1);//去掉定时器的方法
+    }
+
+    var t1 = window.setInterval("change()", 1000);    //设置定时器
+</script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js">
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js">
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+<script type="text/javascript"
+        src="https://api.map.baidu.com/api? v=2.0&ak=xfhhaTThl11qYVrqLZii6w8qE5ggnhrY&__ec_v__=20190126"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js">
+</script>
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    var date01s = [];
+    var num01s = [];
+</script>
+</body>
+</html>

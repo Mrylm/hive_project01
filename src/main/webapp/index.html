@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+
+</head>
+<body style="height: 100%; margin: 0">
+<div>
+    <input type ="button" value="点我" onclick="myFunction()">
+</div>
+<div>
+    <input type="text" id="datetime01"> <input type="button" value="查询" onclick="clickChange()">
+</div>
+<div id="container" style="height: 100%">
+</div>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=xfhhaTThl11qYVrqLZii6w8qE5ggnhrY&__ec_v__=20190126"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    var dates = new Array()
+    var nums = new Array()
+
+    function myFunction() {
+            $.get("/update", function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    nums[i] = data[i].value
+                    dates[i] = data[i].statdate
+                }
+                option = {
+                    title: {
+                        text: 'N日留存统计信息',
+                        left: 'center',
+                        top: '1%',
+                        textStyle: {
+                            color: 'white',
+                            fontSize: 16,
+                        }
+                    },
+                    xAxis: {
+                        name: 'N日留存',
+                        type: 'category',
+                        data: [dates[0], dates[1], dates[2], dates[3], dates[4], dates[5], dates[6]]
+                    },
+                    yAxis: {
+                        name: '留存量',
+                        type: 'value'
+                    },
+                    series: [{
+                        data: [nums[0], nums[1], nums[2], nums[3], nums[4], nums[5], nums[6]],
+                        type: 'line'
+                    }]
+                };
+                ;
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+        });
+    }
+
+        function clickChange() {
+            datetime = $("#datetime01").val();
+           // alert(datetime)
+            $.get("/query", "statdate=" + datetime, function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    dates[i] = data[i].statdate
+                    nums[i] = data[i].value
+                }
+                option = {
+                    title: {
+                        text: '7日留存'
+                    },
+                    xAxis: {
+                        name: "N日",
+                        type: 'category',
+                        data: dates
+                    },
+                    yAxis: {
+                        name: '留存',
+                        type: 'value'
+                    },
+                    series: [{
+                        data: nums,
+                        type: 'line',
+                        areaStyle: {}
+                    }]
+                };
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            });
+        }
+</script>
+</body>
+</html>

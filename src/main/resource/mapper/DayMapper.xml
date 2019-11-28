@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="henu.dao.Daydao">
+
+    <!-- query All -->
+    <select id="queryAll" resultType="DaysStat">
+        SELECT  value, statdate FROM n_days_stat  WHERE TO_DAYS(DATE_FORMAT('2015-01-11','%Y-%m-%d'))>=TO_DAYS(statdate)  AND
+ 7>TO_DAYS(DATE_FORMAT('2015-01-11','%Y-%m-%d'))-TO_DAYS(statdate)
+ORDER BY statdate ASC;
+    </select>
+
+    <select id="queryByday" resultType="DaysStat">
+      SELECT  value, statdate FROM n_days_stat  WHERE TO_DAYS(DATE_FORMAT(#{statdate},'%Y-%m-%d'))>=TO_DAYS(statdate)  AND
+ 7>TO_DAYS(DATE_FORMAT(#{statdate},'%Y-%m-%d'))-TO_DAYS(statdate)
+ORDER BY statdate ASC;
+    </select>
+
+    <select id="queryDayplus" resultType="DaysStat">
+      SELECT  value, statdate FROM n_days_stat  WHERE #{date}>=TO_DAYS(statdate)  AND
+ 7>#{date}-TO_DAYS(statdate)
+ORDER BY statdate ASC;
+    </select>
+
+</mapper>
